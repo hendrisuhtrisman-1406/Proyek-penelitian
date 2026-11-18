@@ -1,0 +1,140 @@
+/* ============================================================
+   TEMA CAFE HANGAT - Sangur Cafe
+   Palet: coklat tua, karamel, krem, aksen emas
+   ============================================================ */
+:root {
+  --coklat-tua: #4e342e;
+  --coklat: #6d4c41;
+  --karamel: #a0522d;
+  --karamel-muda: #c98a5b;
+  --krem: #f5ebe0;
+  --krem-muda: #faf6f0;
+  --emas: #d4a017;
+  --teks: #3e2723;
+}
+
+body {
+  background-color: var(--krem-muda);
+  color: var(--teks);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+/* Navbar */
+.cafe-navbar {
+  background: linear-gradient(135deg, var(--coklat-tua), var(--karamel));
+  box-shadow: 0 2px 8px rgba(78, 52, 46, 0.3);
+}
+.cafe-navbar .navbar-brand { color: #fff; }
+.brand-icon { margin-right: 0.4rem; }
+.cafe-navbar .nav-link { color: rgba(255,255,255,0.85); }
+.cafe-navbar .nav-link:hover, .cafe-navbar .nav-link.active { color: #fff; }
+
+/* Footer */
+.cafe-footer { background: var(--coklat-tua); }
+.cafe-footer small { color: #d7ccc8 !important; }
+
+/* Kartu menu (pelanggan) */
+.menu-card {
+  border: none;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(78,52,46,0.12);
+  transition: transform .15s, box-shadow .15s;
+  background: #fff;
+  height: 100%;
+}
+.menu-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(78,52,46,0.2); }
+.menu-card .card-img-top {
+  height: 140px;
+  object-fit: cover;
+  background: var(--krem);
+}
+.menu-card .harga { color: var(--karamel); font-weight: 700; }
+.menu-habis { opacity: 0.55; }
+.badge-kategori { background: var(--krem); color: var(--coklat); }
+
+/* Tombol tema */
+.btn-cafe {
+  background: linear-gradient(135deg, var(--karamel), var(--coklat));
+  color: #fff; border: none;
+}
+.btn-cafe:hover { color: #fff; filter: brightness(1.1); }
+.btn-outline-cafe {
+  color: var(--karamel); border: 1px solid var(--karamel); background: transparent;
+}
+.btn-outline-cafe:hover { background: var(--karamel); color: #fff; }
+
+/* Kartu statistik dashboard */
+.stat-card {
+  border: none; border-radius: 14px; color: #fff;
+  background: linear-gradient(135deg, var(--coklat), var(--karamel-muda));
+  box-shadow: 0 4px 12px rgba(78,52,46,0.18);
+}
+.stat-card .stat-value { font-size: 1.8rem; font-weight: 800; }
+.stat-card .stat-label { opacity: 0.9; font-size: 0.9rem; }
+
+/* Kartu pesanan (kasir / kitchen) */
+.order-card {
+  border-left: 5px solid var(--karamel);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 1rem;
+  background: #fff;
+}
+.order-card.status-disiapkan { border-left-color: #0dcaf0; }
+.order-card.status-siap { border-left-color: #0d6efd; }
+.order-card.status-disajikan { border-left-color: #198754; }
+
+/* Header halaman pelanggan (mobile) */
+.customer-header {
+  background: linear-gradient(135deg, var(--coklat-tua), var(--karamel));
+  color: #fff; padding: 1rem 0; text-align: center;
+  position: sticky; top: 0; z-index: 1020;
+}
+.customer-header h5 { margin: 0; font-weight: 700; }
+.customer-header small { opacity: 0.85; }
+
+/* Keranjang mengambang (mobile) */
+.cart-fab {
+  position: fixed; bottom: 1.2rem; right: 1.2rem; z-index: 1030;
+  border-radius: 50px; padding: 0.7rem 1.3rem;
+  background: linear-gradient(135deg, var(--emas), var(--karamel));
+  color: #fff; font-weight: 700; border: none;
+  box-shadow: 0 4px 14px rgba(160,82,45,0.45);
+}
+
+/* Tabel */
+.table thead th { background: var(--coklat); color: #fff; border: none; }
+.table-hover tbody tr:hover { background: var(--krem); }
+
+/* Login card */
+.login-card {
+  max-width: 420px; margin: 3rem auto; border: none;
+  border-radius: 16px; box-shadow: 0 8px 30px rgba(78,52,46,0.2);
+}
+.login-card .card-header {
+  background: linear-gradient(135deg, var(--coklat-tua), var(--karamel));
+  color: #fff; text-align: center; border-radius: 16px 16px 0 0 !important;
+  padding: 1.5rem;
+}
+
+/* QR box */
+.qr-box {
+  display: inline-block; padding: 1rem; background: #fff;
+  border: 2px dashed var(--karamel); border-radius: 12px;
+}
+
+/* Placeholder gambar menu */
+.menu-placeholder {
+  height: 140px; display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem; color: #fff; font-weight: 800;
+}
+
+/* Blink untuk pesanan baru */
+@keyframes blink { 50% { opacity: 0.4; } }
+.order-baru { animation: blink 1s linear 3; background: #fff8e1 !important; }
+
+@media print {
+  .no-print, .cafe-navbar, .cafe-footer, .cart-fab { display: none !important; }
+  body { background: #fff; }
+}

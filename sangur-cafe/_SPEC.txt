@@ -1,0 +1,50 @@
+============================================================
+SPESIFIKASI PENGEMBANG - SANGUR CAFE POS (WAJIB DIBACA)
+============================================================
+Project root: C:\Users\spons\Dola\chats\2026-11-16\new-chat\sangur-cafe\
+Target: XAMPP Windows (Apache + MySQL), PHP 7.4+/8.x. TIDAK boleh pakai fitur PHP baru yang tidak ada di XAMPP default.
+
+--- FILE INTI SUDAH ADA (JANGAN dibuat ulang, cukup di-include) ---
+config/database.php  -> define('BASE_URL','/sangur-cafe/'); $pdo (PDO, ERRMODE_EXCEPTION, FETCH_ASSOC, EMULATE_PREPARES=false). DB_NAME=sangur_cafe, user=root, pass=''.
+includes/auth.php    -> session_start, fungsi: e($str) escape XSS, rp($int) format 'Rp 15.000', tgl_id($dt), redirect($path), is_login(), require_login(), require_role(['kasir','owner']), status_label($status), payment_label($s), flash(), role_label($r). Session keys: $_SESSION['user_id'], ['nama'], ['role'].
+includes/header.php  -> SET variabel dulu: $page_title='Judul'; $customer_page=true (hanya utk halaman pelanggan, tanpa navbar admin); LALU require header. Header auto-include config+auth (require_once).
+includes/footer.php  -> tutup main+footer+script (jquery, bootstrap.bundle, app.js lokal).
+assets/css/style.css -> tema cafe (class: btn-cafe, stat-card, order-card, menu-card, customer-header, cart-fab, qr-box, menu-placeholder, table thead).
+assets/lib/          -> bootstrap.min.css, bootstrap.bundle.min.js, jquery.min.js, qrcode.min.js (SEMUA OFFLINE, jangan pakai CDN).
+assets/img/*.svg     -> 12 placeholder menu: nasi-goreng, mie-goreng, chicken-wings, beef-burger, kentang-goreng, roti-bakar, kopi-hitam, cappuccino, teh-tarik, es-coklat, jus-alpukat, lemon-tea (semua .svg).
+database.sql         -> sudah final, JANGAN ubah schema.
+
+--- SKEMA DATABASE (final) ---
+users(id, nama, username, password_hash, role ENUM('kasir','kitchen','owner'), created_at)
+tables(id, table_number UNIQUE, qr_token, created_at)
+categories(id, name)  -- 1=Makanan, 2=Minuman
+menus(id, name, description, price INT, category_id, image VARCHAR, status ENUM('tersedia','habis'), created_at)
+orders(id, table_id, customer_name NULL, total_price INT, status ENUM('pending','disiapkan','siap','disajikan') DEFAULT 'pending', payment_status ENUM('unpaid','paid') DEFAULT 'unpaid', ordered_at, updated_at)
+order_items(id, order_id, menu_id, quantity, price_at_order INT, subtotal INT)
+transactions(id, order_id UNIQUE, amount_paid INT, change_amount INT, cashier_id, paid_at)
+
+Alur status: pending (pesanan masuk) -> disiapkan (dapur mulai) -> siap (dapur selesai) -> disajikan (sudah diantar / lunas). Kasir yang bayar: payment_status unpaid->paid + insert transactions.
+
+--- KONVENSI WAJIB ---
+1. Setiap halaman PHP di subfolder (customer/, kasir/, kitchen/, owner/, api/) mulai dengan:
+   <?php
+   require_once __DIR__ . '/../config/database.php';
+   require_once __DIR__ . '/../includes/auth.php';
+   // untuk halaman terproteksi: require_role(['kasir']); (sesuaikan role)
+   $page_title = 'Judul';
+   // $customer_page = true; // hanya halaman pelanggan
+   require __DIR__ . '/../includes/header.php';
+   ... konten ...
+   require __DIR__ . '/../includes/footer.php';
+2. API (folder api/): include config+auth, header('Content-Type: application/json'), keluar dengan echo json_encode([...]); exit. JANGAN include header/footer. Untuk API yang butuh login, panggil require_role([...]) SEBELUM proses; jika gagal fungsi sudah die(). Untuk submit-order pelanggan (tanpa login), TIDAK perlu require_login tapi validasi table_id.
+3. SEMUA query user-input pakai prepared statement ($pdo->prepare(...)->execute([$var])). JANGAN pernah concat string ke SQL.
+4. Semua output variabel dari DB/POST dibungkus e() saat echo HTML.
+5. Bahasa Indonesia, mata uang pakai rp(), tanggal pakai tgl_id().
+6. Setiap aksi (simpan/hapus/bayar/update status) beri feedback: set $_SESSION['flash'] lalu redirect, atau return JSON success lalu tampilkan cafeToast() (ada di assets/js/app.js).
+7. Link/URL gunakan BASE_URL . 'path' (misal <a href="<?= BASE_URL ?>kasir/dashboard.php">). Form action ke file sendiri cukup action="" atau action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>".
+8. JANGAN ubah file inti (config, auth, header, footer, css, database.sql). Jika perlu tambah fungsi, tambahkan di halaman sendiri.
+9. Real-time: AJAX polling setInterval 4000ms fetch ke api/get-orders.php, render ulang daftar. Jangan reload halaman penuh.
+10. Mobile-friendly: pakai grid Bootstrap row-cols-1 row-cols-sm-2 row-cols-md-3 untuk menu; form full width.
+
+--- FILE YANG TIDAK BOLEH DITIMPA (dibuat agen lain) ---
+Semua agen hanya menulis file di folder tugasnya masing-masing. Jangan menyentuh file agen lain.
